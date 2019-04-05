@@ -16,8 +16,8 @@
       ii.Optima for code optimization.
 
 
-# Datset
-Datset can be found here:
+# Dataset:
+Dataset can be found here:
 https://drive.google.com/open?id=1vhm827aOBXF9apU8ByKYJQCx7N0Se5rf
       
  
