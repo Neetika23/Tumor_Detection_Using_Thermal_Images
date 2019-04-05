@@ -14,6 +14,11 @@
     4.Additional Softwares:
       i.NVIDIA CUDA 9.0 for GPU acceleration
       ii.Optima for code optimization.
+
+
+# Datset
+Datset can be found here:
+https://drive.google.com/open?id=1vhm827aOBXF9apU8ByKYJQCx7N0Se5rf
       
  
   
