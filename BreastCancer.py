@@ -32,7 +32,7 @@ def mean_pred(y_true, y_pred):
     return K.mean(y_pred)
 
 
-# Crop and rotate image, return 12 images
+
 def getCropImgs(img, needRotations=False):
     # img = img.convert('L')
     z = np.asarray(img, dtype=np.int8)
@@ -45,12 +45,8 @@ def getCropImgs(img, needRotations=False):
             if needRotations:
                 c.append(np.rot90(np.rot90(crop)))
 
-    # os.system('cls')
-    # print("Crop imgs", c[2].shape)
-
     return c
 
-# Get the softmax from folder name
 def getAsSoftmax(fname):
     if (fname == 'b'):
         return [1, 0, 0, 0]
@@ -61,11 +57,7 @@ def getAsSoftmax(fname):
     else:
         return [0, 0, 0, 1]
 
-
-# Return all images as numpy array, labels
 def get_imgs_frm_folder(path):
-    # x = np.empty(shape=[19200,512,512,3],dtype=np.int8)
-    # y = np.empty(shape=[400],dtype=np.int8)
 
     x = []
     y = []
@@ -74,16 +66,14 @@ def get_imgs_frm_folder(path):
     for foldname in os.listdir(path):
         for filename in os.listdir(os.path.join(path, foldname)):
             img = Image.open(os.path.join(os.path.join(path, foldname), filename))
-            # img.show()
             crpImgs = getCropImgs(img)
             cnt += 1
             if cnt % 10 == 0:
                 print(str(cnt) + " Images loaded")
             for im in crpImgs:
                 x.append(np.divide(np.asarray(im, np.float16), 255.))
-                # Image.fromarray(np.divide(np.asarray(im, np.float16), 255.), 'RGB').show()
                 y.append(getAsSoftmax(foldname))
-                # print(getAsSoftmax(foldname))
+              
 
     print("Images cropped")
     print("Loading as array")
@@ -106,8 +96,6 @@ def load_dataset(testNum=numOfTestPoints):
 
     nshapeX = train_set_x_orig.shape
     nshapeY = train_set_y_orig.shape
-
-    # train_set_y_orig = oh
 
     print("folder trainX" + str(nshapeX))
     print("folder trainY" + str(nshapeY))
@@ -191,16 +179,7 @@ def train(batch_size, epochs):
     model = defModel(X_train.shape[1:])
 
     model.compile('adam', 'categorical_crossentropy', metrics=['accuracy'])
-    # Uncomment the below code and comment the lines with(<>), to implement the image augmentations.
-
-    # datagen = keras.preprocessing.image.ImageDataGenerator(
-    # zoom_range=0.2, # randomly zoom into images
-    # rotation_range=180,  # randomly rotate images in the range (degrees, 0 to 180)
-    # width_shift_range=0.1,  # randomly shift images horizontally (fraction of total width)
-    # height_shift_range=0.1,  # randomly shift images vertically (fraction of total height)
-    # horizontal_flip=False,  # randomly flip images
-    # vertical_flip=False  # randomly flip images
-    # )
+  
     while True:
         try:
             model = load_model(modelSavePath)
@@ -208,12 +187,6 @@ def train(batch_size, epochs):
             print("Training a new model")
 
         model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size) # <>
-
-        # history = model.fit_generator(datagen.flow(X_train, Y_train, batch_size=batch_size),
-        #                              epochs=epochs
-        #                              # validation_data=(X_test, Y_test))
-        #                              )
-        # history.model.save('tumour_model.h5')
 
         model.save(modelSavePath)
 
@@ -235,8 +208,6 @@ def train(batch_size, epochs):
 
 def predict(img, savedModelPath, showImg=True):
     model = load_model(savedModelPath)
-    # if showImg:
-    # Image.fromarray(np.array(img, np.float16), 'RGB').show()
 
     x = img
     if showImg:
@@ -247,12 +218,9 @@ def predict(img, savedModelPath, showImg=True):
     print("prediction from CNN: " + str(softMaxPred) + "\n")
     probs = softmaxToProbs(softMaxPred)
 
-    # plot_model(model, to_file='Model.png')
-    # SVG(model_to_dot(model).create(prog='dot', format='svg'))
     maxprob = 0
     maxI = 0
     for j in range(len(probs)):
-        # print(str(j) + " : " + str(round(probs[j], 4)))
         if probs[j] > maxprob:
             maxprob = probs[j]
             maxI = j
@@ -306,8 +274,6 @@ def predictImage(img_path='my_image.jpg', arrayImg=None, printData=True):
             print(str(classes[j]) + " : " + str(round(compProbs[j] / 12, 4)) + "%")
 
 
-#######################################################################
-
 print("1. Do you want to train the network\n"
       "2. Test the model\n(Enter 1 or 2)?\n")
 ch = int(input())
@@ -328,10 +294,6 @@ if ch == 1:
         np.save('X_test', X_test)
         np.save('Y_test_orig', Y_test_orig)
         np.save('classes', classes)
-
-    # for y in Y_train:
-    #    print(y)
-
     print("number of training examples = " + str(X_train.shape[0]))
     print("number of test examples = " + str(X_test.shape[0]))
     print("X_train shape: " + str(X_train.shape))
@@ -374,15 +336,13 @@ elif ch == 2:
         for ranNum in ran:
             testImgsX.append(X_train[ranNum])
             testImgsY.append(Y_train[ranNum])
-            # predict(Image.fromarray(X_train[ran],'RGB'))
 
         X_train = None
         Y_train = None
 
         print("testImgsX shape: " + str(len(testImgsX)))
         print("testImgsY shape: " + str(len(testImgsY)))
-        # print(testImgsY[1])
-        # print(testImgsX[1])
+      
 
         cnt = 0.0
 
